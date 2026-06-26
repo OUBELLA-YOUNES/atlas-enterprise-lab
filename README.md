@@ -14,53 +14,58 @@ This project simulates a modern Windows/Linux enterprise environment while opera
 | **Architecture** | Multi-NIC Segmented Network |
 | **Boot Strategy** | Phased Dynamic Boot |
 
-## 🏗️ Architecture
+
+# Architecture Overview
+
+```
+                                      Internet
+                                          │
+                                          │
+                              VMware NAT / Bridged WAN
+                                          │
+                                          ▼
+                             +-------------------------+
+                             |       CAS-FW-01         |
+                             |        OPNsense         |
+                             | Firewall • NAT • IDS    |
+                             |      (Suricata)         |
+                             +-----------+-------------+
+                                         │
+                ┌─────────────┬──────────┼──────────┬─────────────┬──────────────┐
+                │             │          │          │             │
+           VLAN 10        VLAN 20    VLAN 30    VLAN 40      VLAN 50
+        Management        HR Zone    IT Zone    Finance        DMZ
+      192.168.10.0/24 192.168.20.0 192.168.30.0 192.168.40.0 192.168.50.0
+                │             │          │          │             │
+                │             │          │          │             │
+     ┌──────────┴──────┐      │     ┌────┴────┐     │      ┌──────┴──────┐
+     │ CAS-DC-01       │      │     │CAS-IT-WS1│     │      │ CAS-DMZ-01  │
+     │ Primary DC      │      │     │ Windows  │     │      │ Ubuntu 24.04│
+     │ DNS • DHCP      │      │     │ IT Client│     │      │ Nginx Proxy │
+     │ DFS • WDS       │      │     └──────────┘     │      └─────────────┘
+     │ IIS + NLB Node1 │      │                      │
+     └──────────┬──────┘      │                 Reserved
+                │             │
+     ┌──────────┴──────┐      │
+     │ CAS-DC-02       │      │
+     │ Secondary DC    │      │
+     │ Server Core     │      │
+     │ DNS Replica     │      │
+     │ IIS + NLB Node2 │      │
+     └──────────┬──────┘      │
+                │             │
+     ┌──────────┴─────────────┘
+     │ CAS-SRV-LIN01
+     │ Ubuntu Server 24.04
+     │
+     ├── Docker Engine
+     ├── Zabbix
+     ├── GLPI
+     ├── Samba
+     └── SSSD / Realmd
+```
 
 
-
-                              INTERNET
-                                  │
-                                  │
-                         ┌────────▼────────┐
-                         │   CAS-FW-01     │
-                         │   OPNsense      │
-                         │  Suricata IDS   │
-                         └────────┬────────┘
-                                  │
-                                  │  Multi-NIC
-                                  │
-         ┌────────────────────────┼────────────────────────┐
-         │                        │                        │
-         ▼                        ▼                        ▼
-   ┌─────────────┐          ┌─────────────┐          ┌─────────────┐
-   │  VLAN 10    │          │  VLAN 20    │          │  VLAN 30    │
-   │  MANAGEMENT │          │     HR      │          │     IT      │
-   │ 192.168.10  │          │ 192.168.20  │          │ 192.168.30  │
-   └──────┬──────┘          └──────┬──────┘          └──────┬──────┘
-          │                        │                        │
-          ▼                        ▼                        ▼
-   ┌─────────────┐          ┌─────────────┐          ┌─────────────┐
-   │  DC-01      │          │  HR-WS1     │          │  IT-WS1     │
-   │  DC-02      │          │  (meryem)   │          │  (idrissi)  │
-   │  SRV-LIN01  │          └─────────────┘          └─────────────┘
-   └─────────────┘
-                                  │
-                                  │
-         ┌────────────────────────┼────────────────────────┐
-         │                        │                        │
-         ▼                        ▼                        ▼
-   ┌─────────────┐          ┌─────────────┐          ┌─────────────┐
-   │  VLAN 50    │          │  VLAN 60    │          │             │
-   │    DMZ      │          │  ATTACKER   │          │             │
-   │ 192.168.50  │          │ 192.168.60  │          │             │
-   └──────┬──────┘          └──────┬──────┘          └─────────────┘
-          │                        │
-          ▼                        ▼
-   ┌─────────────┐          ┌─────────────┐
-   │  DMZ-01     │          │  KALI-01    │
-   │  Nginx      │          │  Attacker   │
-   │  Proxy      │          └─────────────┘
-   └─────────────┘
 
 ## 🖥️ Virtual Machines
 
