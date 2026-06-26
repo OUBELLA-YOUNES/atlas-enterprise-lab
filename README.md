@@ -18,7 +18,7 @@ This project simulates a modern Windows/Linux enterprise environment while opera
 # Architecture Overview
 
 ```
-                                      Internet
+                                           Internet
                                           │
                                           │
                               VMware NAT / Bridged WAN
@@ -31,38 +31,39 @@ This project simulates a modern Windows/Linux enterprise environment while opera
                              |      (Suricata)         |
                              +-----------+-------------+
                                          │
-                ┌─────────────┬──────────┼──────────┬─────────────┬──────────────┐
+                ┌─────────────┬──────────┼──────────┬─────────────┐
                 │             │          │          │             │
-           VLAN 10        VLAN 20    VLAN 30    VLAN 40      VLAN 50
-        Management        HR Zone    IT Zone    Finance        DMZ
-      192.168.10.0/24 192.168.20.0 192.168.30.0 192.168.40.0 192.168.50.0
-                │             │          │          │             │
-                │             │          │          │             │
-     ┌──────────┴──────┐      │     ┌────┴────┐     │      ┌──────┴──────┐
-     │ CAS-DC-01       │      │     │CAS-IT-WS1│     │      │ CAS-DMZ-01  │
-     │ Primary DC      │      │     │ Windows  │     │      │ Ubuntu 24.04│
-     │ DNS • DHCP      │      │     │ IT Client│     │      │ Nginx Proxy │
-     │ DFS • WDS       │      │     └──────────┘     │      └─────────────┘
-     │ IIS + NLB Node1 │      │                      │
-     └──────────┬──────┘      │                 Reserved
-                │             │
-     ┌──────────┴──────┐      │
-     │ CAS-DC-02       │      │
-     │ Secondary DC    │      │
-     │ Server Core     │      │
-     │ DNS Replica     │      │
-     │ IIS + NLB Node2 │      │
-     └──────────┬──────┘      │
-                │             │
-     ┌──────────┴─────────────┘
-     │ CAS-SRV-LIN01
-     │ Ubuntu Server 24.04
-     │
-     ├── Docker Engine
-     ├── Zabbix
-     ├── GLPI
-     ├── Samba
-     └── SSSD / Realmd
+           VLAN 10        VLAN 20    VLAN 30       VLAN 50
+        Management        HR Zone    IT Zone         DMZ
+      192.168.10.0/24 192.168.20.0 192.168.30.0  192.168.50.0
+                │             │          │             │
+                │             │          │             │
+     ┌──────────┴──────┐ ┌────┴────┐ ┌───┴────┐ ┌──────┴──────┐
+     │ CAS-DC-01       │ │HR-WS1   │ │IT-WS1  │ │ CAS-DMZ-01  │
+     │ Primary DC      │ │Windows  │ │Windows │ │ Ubuntu 24.04│
+     │ DNS • DHCP      │ │(meryem) │ │(idrissi│ │ Nginx Proxy │
+     │ DFS • WDS       │ └─────────┘ └────────┘ └─────────────┘
+     │ IIS + NLB Node1 │
+     └──────────┬──────┘
+                │
+     ┌──────────┴──────┐
+     │ CAS-DC-02       │
+     │ Secondary DC    │
+     │ Server Core     │
+     │ DNS Replica     │
+     │ IIS + NLB Node2 │
+     └──────────┬──────┘
+                │
+     ┌──────────┴──────┐
+     │ CAS-SRV-LIN01   │
+     │ Ubuntu 24.04    │
+     │                 │
+     ├── Docker Engine │
+     ├── Zabbix        │
+     ├── GLPI          │
+     ├── Samba         │
+     └── SSSD/Realmd   │
+     └─────────────────┘
 ```
 
 
