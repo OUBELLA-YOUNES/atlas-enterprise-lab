@@ -14,6 +14,10 @@ This project simulates a modern Windows/Linux enterprise environment while opera
 | **Architecture** | Multi-NIC Segmented Network |
 | **Boot Strategy** | Phased Dynamic Boot |
 
+## 🏗️ Architecture
+
+
+
                               INTERNET
                                   │
                                   │
@@ -23,16 +27,15 @@ This project simulates a modern Windows/Linux enterprise environment while opera
                          │  Suricata IDS   │
                          └────────┬────────┘
                                   │
-                                  │  Multi-NIC (No VLAN Tagging)
+                                  │  Multi-NIC
                                   │
          ┌────────────────────────┼────────────────────────┐
          │                        │                        │
          ▼                        ▼                        ▼
    ┌─────────────┐          ┌─────────────┐          ┌─────────────┐
-   │  vmnet10    │          │  vmnet20    │          │  vmnet30    │
+   │  VLAN 10    │          │  VLAN 20    │          │  VLAN 30    │
    │  MANAGEMENT │          │     HR      │          │     IT      │
-   │192.168.10.0 │          │192.168.20.0 │          │192.168.30.0 │
-   │    /24      │          │    /24      │          │    /24      │
+   │ 192.168.10  │          │ 192.168.20  │          │ 192.168.30  │
    └──────┬──────┘          └──────┬──────┘          └──────┬──────┘
           │                        │                        │
           ▼                        ▼                        ▼
@@ -47,18 +50,17 @@ This project simulates a modern Windows/Linux enterprise environment while opera
          │                        │                        │
          ▼                        ▼                        ▼
    ┌─────────────┐          ┌─────────────┐          ┌─────────────┐
-   │  vmnet40    │          │  vmnet50    │          │  vmnet99    │
-   │  FINANCE    │          │    DMZ      │          │  ATTACKER   │
-   │192.168.40.0 │          │192.168.50.0 │          │192.168.99.0 │
-   │    /24     │          │    /24      │          │    /24      │
-   └──────┬──────┘          └──────┬──────┘          └──────┬──────┘
-          │                        │                        │
-          ▼                        ▼                        ▼
-   ┌─────────────┐          ┌─────────────┐          ┌─────────────┐
-   │  (Reserved) │          │  DMZ-01     │          │  KALI-01    │
-   │             │          │  Nginx      │          │  Attacker   │
-   │             │          │  Proxy      │          │             │
-   └─────────────┘          └─────────────┘          └─────────────┘
+   │  VLAN 50    │          │  VLAN 60    │          │             │
+   │    DMZ      │          │  ATTACKER   │          │             │
+   │ 192.168.50  │          │ 192.168.60  │          │             │
+   └──────┬──────┘          └──────┬──────┘          └─────────────┘
+          │                        │
+          ▼                        ▼
+   ┌─────────────┐          ┌─────────────┐
+   │  DMZ-01     │          │  KALI-01    │
+   │  Nginx      │          │  Attacker   │
+   │  Proxy      │          └─────────────┘
+   └─────────────┘
 
 ## 🖥️ Virtual Machines
 
