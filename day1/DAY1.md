@@ -133,6 +133,8 @@ Departmental user accounts were created.
 ### Screenshot
 
 ![](screenshots/06-users.png)
+![](screenshots/07-users.png)
+
 
 ---
 
